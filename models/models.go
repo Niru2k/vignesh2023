@@ -7,5 +7,6 @@ type User struct {
 	Password string `json:"password"`
 }
 
+//using slice to append users while signing up
 var Users []User
 var SigningKey = []byte("enter secret key")

@@ -1,18 +1,20 @@
 package router
 
 import (
+	//user defined package
 	"echo/handler"
 
+	//third party package
 	"github.com/labstack/echo/v4"
 )
 
 func Router() {
 	e := echo.New()
 
-	// Routes
+	// Router
 	e.POST("/signup", handler.Signup)
 	e.POST("/login", handler.Login)
-    e.GET("/",handler.Welcome)
+	
 	// Start the server
 	e.Start(":8000")
 }
