@@ -14,7 +14,10 @@ func Router() {
 	// Router
 	e.POST("/signup", handler.Signup)
 	e.POST("/login", handler.Login)
-	
-	// Start the server
-	e.Start(":8000")
+	e.POST("/posting",handler.Jobposting)
+	e.GET("/posting",handler.GetJobPostingDetails)
+	e.GET("posting/:id",handler.GetJobPostingByID)
+	e.PUT("posting/:id",handler.UpdateJob)
+	e.DELETE("posting/:id",handler.DeleteJob)
+	e.Logger.Fatal(e.Start(":8000"))
 }
