@@ -2,7 +2,7 @@ package handler
 
 import (
 	//built in package
-	"fmt"
+
 	"net/http"
 	"regexp"
 
@@ -21,11 +21,17 @@ func Signup(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"warning": "Invalid Format"})
 	}
 
-	//make sure that email, username, and password should not be given as an empty field
-	if user.Email == "" || user.Username == "" || user.Password == "" {
-		return c.JSON(http.StatusBadRequest, map[string]string{"warning": "Email, Username, and Password field should not be empty"})
-	}
 
+	//make sure that email, username, and password should not be given as an empty field
+	if user.Email == ""  {
+		return c.JSON(http.StatusBadRequest, map[string]string{"warning": "Email field should not be empty"})
+	}
+	if user.Username == ""{
+		return c.JSON(http.StatusBadRequest, map[string]string{"warning": "Username field should not be empty"})
+	}
+	if len(user.Password) < 8 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"warning": "Password should be more than 8 characters"})
+	}
 	//validates correct email format
 	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
 	if !emailRegex.MatchString(user.Email) {
@@ -44,7 +50,6 @@ func Signup(c echo.Context) error {
 		"email":    user.Email,
 		"username": user.Username,
 	})
-
 	tokenString, err := token.SignedString(models.SigningKey)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"warning": "Failed To Generate Token"})
@@ -100,7 +105,6 @@ func Jobposting(c echo.Context) error {
 		if u.Email == post.Email {
 			return c.JSON(http.StatusBadRequest, map[string]string{"warning": "Email Already Exists"})
 		}
-
 	}
 
 	//the field details should not be empty
@@ -131,25 +135,19 @@ func GetJobPostingByID(c echo.Context) error {
 	// Find all job postings with the matching company ID
 	var foundJobPostings []models.Jobposting
 	for _, job := range models.Job {
-
 		if job.CompanyID == companyID {
-
 			foundJobPostings = append(foundJobPostings, job)
-
 		}
 	}
 
 	// Check if any job postings were found
 	if len(foundJobPostings) == 0 {
-
 		return c.JSON(http.StatusNotFound, map[string]string{"WARNING": " Company ID Does Not Exists "})
 	}
-
 	return c.JSON(http.StatusOK, foundJobPostings)
 }
 
 // update job posting details by using id
-
 func UpdateJob(c echo.Context) error {
 	// Parse the company ID from the URL parameter
 	companyID := c.Param("id")
@@ -164,13 +162,10 @@ func UpdateJob(c echo.Context) error {
 	if !emailRegex.MatchString(updatedJob.Email) {
 		return c.JSON(http.StatusBadRequest, map[string]string{"warning": "Invalid Email Format."})
 	}
-
 	index := -1
 	for i, job := range models.Job {
 		if job.CompanyID == companyID {
-
 			index = i
-
 			break
 		}
 	}
