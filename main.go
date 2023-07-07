@@ -1,7 +1,8 @@
 package main
 
-import "fmt"
+//user defined package
+import "echo/router"
 
 func main() {
-	fmt.Println("hello")
+	router.Router()
 }
