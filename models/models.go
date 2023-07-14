@@ -1,34 +1,33 @@
 package models
-type User struct {
-	Email    string `json:"email"`
-	Username string `json:"username"`
-	Password string `json:"password" binding:"required"`
+
+type Information struct {
+	User_id     uint   `json:"-"                   gorm:"primaryKey;autoIncrement:true"`
+	Email       string `json:"email"               gorm:"column:email;type:varchar(35)"`
+	Username    string `json:"username"            gorm:"column:user_name;type:varchar(35)"`
+	Password    string `json:"password"            gorm:"column:password;type:varchar(35)"`
+	Role        string `json:"role"                gorm:"column:role;type:varchar(25)"`
+	PhoneNumber string `json:"phone_number"        gorm:"column:phone_number;type:varchar(15)"`
 }
 
 type Jobposting struct {
-	CompanyID   string `json:"id"`
-	CompanyName string `json:"company name"`
-	Website     string `json:"website"`
-	JobTitle    string `json:"job title"`
-	JobType     string `json:"job type"`
-	City        string `json:"city"`
-	State       string `json:"state"`
-	Country     string `json:"country"`
-	Email       string `json:"email"`
-	Description string `json:"description"`
+	Job_id      uint   `json:"-"                   gorm:"primaryKey;autoIncrement:true"`
+	CompanyName string `json:"company_name"        gorm:"column:company_name;type:varchar(50)"`
+	Website     string `json:"website"             gorm:"column:website;type:varchar(50)"`
+	JobTitle    string `json:"job_title"           gorm:"column:job_title;type:varchar(50)"`
+	JobType     string `json:"job_type"            gorm:"column:job_type;type:varchar(50)"`
+	City        string `json:"city"                gorm:"column:city;type:varchar(50)"`
+	State       string `json:"state"               gorm:"column:state;type:varchar(50)"`
+	Country     string `json:"country"             gorm:"column:country;type:varchar(50)"`
+	Email       string `json:"email"               gorm:"column:email;type:varchar(50)"`
+	Description string `json:"description"         gorm:"column:description;type:varchar(50)"`
 }
 
-// implementing enum method
-type StatusEnum string
-type Select struct {
-	Country  StatusEnum `gorm:"type:status_enum"`
-	Jobtype  StatusEnum `gorm:"type:status_enum"`
-	JobTitle string
+type Comments struct {
+	Comment_Id uint   `json:"-"                    gorm:"primarykey;autoIncrement:true"`
+	Comment    string `json:"comment"              gorm:"column:comment;type:varchar(200)"`
+	Interest   bool   `json:"interest"             gorm:"column:interest;type:boolean"`
+	User_id    uint   `json:"user_id"              gorm:"type:bigint;references:information(user_id)"`
+	Job_id     uint   `json:"job_id"               gorm:"type:bigint;references:jobposting(job_id)"`
 }
 
-// using slice method to append users while signing up
-var Users []User
-
-//using slice to add job posting
-var Job []Jobposting
-var SigningKey = []byte("enter secret key")
+var SigningKey = []byte("secret")

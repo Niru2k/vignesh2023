@@ -1,7 +1,8 @@
 package main
 
-//user defined package
+
 import (
+	//user defined package
 	"echo/router"
        "echo/driver"
 	   "echo/repository"
@@ -9,7 +10,7 @@ import (
 
 func main() {
 	driver.DatabaseConnection()
-	repository.InitiateEnumTable()
+	repository.CreateTables()
 	router.Router()
 }
 
