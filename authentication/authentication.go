@@ -4,13 +4,14 @@ import (
 	//inbuilt package
 	"errors"
 	"net/http"
+	"time"
 
 	//third party package
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 )
 
-//setting authentication and authorization for admin and user
+// setting authentication and authorization for admin and user
 func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		tokenString := c.Request().Header.Get("Authorization")
@@ -30,6 +31,12 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil || !token.Valid {
 			return c.String(http.StatusUnauthorized, "Invalid token")
 		}
+		//Check whether token is expired or not
+		a, ok := claims["exp"].(int64)
+		if ok && a < time.Now().Unix() {
+			return c.String(http.StatusUnauthorized, "Expired token")
+		}
+
 		c.Set("email", claims["email"])
 		c.Set("role", claims["role"])
 
@@ -37,7 +44,7 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-//Admin verifying authentication API
+// Admin verifying authentication API
 func AdminAuth(c echo.Context) error {
 	role := c.Get("role").(string)
 	if role != "admin" {
@@ -46,7 +53,7 @@ func AdminAuth(c echo.Context) error {
 	return nil
 }
 
-//User verifying authentication API
+// User verifying authentication API
 func UserAuth(c echo.Context) error {
 	role := c.Get("role").(string)
 	if role != "user" {
