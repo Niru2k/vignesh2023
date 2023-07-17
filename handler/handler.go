@@ -2,7 +2,9 @@ package handler
 
 import (
 	//built in package
+	"fmt"
 	"net/http"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -17,6 +19,7 @@ import (
 
 	//third party package
 	"github.com/dgrijalva/jwt-go"
+	"github.com/fatih/structs"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"golang.org/x/crypto/bcrypt"
@@ -74,8 +77,8 @@ func Signup(c echo.Context) error {
 			"status":  400,
 		})
 	}
-	err = repository.ReadUserByEmail(user)
-	if err != nil {
+	_, err = repository.ReadUserByEmail(user)
+	if err == nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "user already exist",
 			"status":  400,
@@ -91,7 +94,6 @@ func Signup(c echo.Context) error {
 // Login API
 func Login(c echo.Context) error {
 	var login models.Information
-	var verify models.Information
 	if err := c.Bind(&login); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Invalid Format",
@@ -99,10 +101,10 @@ func Login(c echo.Context) error {
 		})
 	}
 	//verify the email whether its already registered in the SignUp API or not
-	err := repository.ReadUserByEmail(login)
+	verify, err := repository.ReadUserByEmail(login)
 	if err == nil {
 		//checks whether the given password matches with the email
-		if err := bcrypt.CompareHashAndPassword([]byte(verify.Password), []byte(login.Password)); err == nil {
+		if err := bcrypt.CompareHashAndPassword([]byte(verify.Password), []byte(login.Password)); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]interface{}{
 				"warning": " Password Not Matching",
 				"status":  400,
@@ -150,12 +152,18 @@ func Jobposting(c echo.Context) error {
 			"status":  400,
 		})
 	}
-	if post.CompanyName == "" || post.Website == "" || post.JobTitle == "" || post.JobType == "" || post.City == "" || post.State == "" || post.Country == "" || post.Email == "" || post.Description == "" {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"warning": "Field Details Missing",
-			"status":  400,
-		})
+
+	fields := structs.Names(&models.Jobposting{})
+	for _, field := range fields {
+		if reflect.ValueOf(&post).Elem().FieldByName(field).Interface() == "" {
+			check := fmt.Sprintf("missing %s", field)
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"message": check,
+				"status":  400,
+			})
+		}
 	}
+
 	//validates correct email format
 	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
 	if !emailRegex.MatchString(post.Email) {
@@ -180,6 +188,13 @@ func Jobposting(c echo.Context) error {
 
 // get all company job posting details
 func GetJobPostingDetails(c echo.Context) error {
+	err := authentication.CommonAuth(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "only admin and user have the access",
+			"status":  401,
+		})
+	}
 	creates, err := repository.GetAllPosts()
 	if err != nil {
 		return c.JSON(http.StatusNotFound, map[string]interface{}{
@@ -192,12 +207,19 @@ func GetJobPostingDetails(c echo.Context) error {
 
 // get jobs posted by company by using their ID
 func GetJobPostingByID(c echo.Context) error {
+	err := authentication.CommonAuth(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "only admin and user have the access",
+			"status":  401,
+		})
+	}
 	companyID := c.Param("id")
 	create, err := repository.Getjobpostid(companyID)
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
 			"error":  "job post does not exist",
-			"status": 401,
+			"status": 404,
 		})
 	}
 	return c.JSON(http.StatusOK, create)
@@ -208,9 +230,9 @@ func UpdateJob(c echo.Context) error {
 	//allows only admins to update job details
 	err := authentication.AdminAuth(c)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
 			"message": "only admin have the access",
-			"status":  403,
+			"status":  401,
 		})
 	}
 	companyID := c.Param("id")
@@ -231,8 +253,8 @@ func UpdateJob(c echo.Context) error {
 		}
 		err := repository.UpdateJob(companyID, updatedjob)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, map[string]interface{}{
-				"warning": "Invalid job id",
+			return c.JSON(http.StatusNotFound, map[string]interface{}{
+				"warning": " job id not found",
 				"status":  400,
 			})
 		}
@@ -241,9 +263,9 @@ func UpdateJob(c echo.Context) error {
 			"status":  200,
 		})
 	}
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusNotFound, map[string]interface{}{
 		"message": "job post not found",
-		"status":  400,
+		"status":  404,
 	})
 }
 
@@ -252,9 +274,9 @@ func DeleteJob(c echo.Context) error {
 	//allows only admins to delete job details
 	err := authentication.AdminAuth(c)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
 			"message": "only admin have the access",
-			"status":  400,
+			"status":  401,
 		})
 	}
 	companyID := c.Param("id")
@@ -267,20 +289,27 @@ func DeleteJob(c echo.Context) error {
 			"status":  200,
 		})
 	}
-	return c.JSON(http.StatusBadRequest, map[string]interface{}{
-		"warning": "Invalid job id",
-		"status":  400,
+	return c.JSON(http.StatusNotFound, map[string]interface{}{
+		"warning": " job id not found",
+		"status":  404,
 	})
 }
 
 // get all job post available
 func GetJobPostingByCompany(c echo.Context) error {
+	err := authentication.CommonAuth(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "only admin and user have the access",
+			"status":  401,
+		})
+	}
 	company_jobs := c.Param("companyname")
 	company_name, err := repository.GetJobpostByCompanyName(company_jobs)
 	if err != nil || len(company_name) == 0 {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
 			"error":  "company post does not exist",
-			"status": 400,
+			"status": 404,
 		})
 	}
 	return c.JSON(http.StatusOK, company_name)
@@ -333,6 +362,13 @@ func UserComments(c echo.Context) error {
 
 // getting all user comments API
 func GetUserComments(c echo.Context) error {
+	err := authentication.CommonAuth(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "only admin and user have the access",
+			"status":  401,
+		})
+	}
 	viewcomments, err := repository.GetAllComments()
 	if err != nil {
 		return c.JSON(http.StatusNotFound, map[string]interface{}{
@@ -345,9 +381,16 @@ func GetUserComments(c echo.Context) error {
 
 // Get specific comment API
 func GetCommentByID(c echo.Context) error {
+	err := authentication.CommonAuth(c)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "only admin and user have the access",
+			"status":  401,
+		})
+	}
 	var getcomment models.Comments
 	commentID := c.Param("id")
-	getcomment, err := repository.ReadCommentById(commentID)
+	getcomment, err = repository.ReadCommentById(commentID)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, map[string]interface{}{
 			"error":  "no comment found for this id",
@@ -379,7 +422,7 @@ func UpdateComment(c echo.Context) error {
 		err := repository.UpdateComment(commentid, updatecomment)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, map[string]interface{}{
-				"warning": "Invalid comment id",
+				"warning": "comment id not found",
 				"status":  404,
 			})
 		}

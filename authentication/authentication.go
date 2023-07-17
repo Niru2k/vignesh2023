@@ -61,3 +61,12 @@ func UserAuth(c echo.Context) error {
 	}
 	return nil
 }
+
+//common verification
+func CommonAuth(c echo.Context) error {
+	role := c.Get("role").(string)
+	if role == "user"||role == "admin" {
+		return nil
+	}
+	return errors.New("only user and admin have access to this endpoint")
+}

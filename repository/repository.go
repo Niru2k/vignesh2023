@@ -1,8 +1,6 @@
 package repository
 
 import (
-	//third party package
-
 	//user defined package
 	// "echo/handler"
 	"echo/helper"
@@ -23,9 +21,9 @@ func JobPosting(post models.Jobposting) error {
 	err := helper.Db.Create(&post).Error
 	return err
 }
-func ReadUserByEmail(user models.Information) error {
+func ReadUserByEmail(user models.Information)(models.Information,error)  {
 	err := helper.Db.Where("email=?", user.Email).First(&user).Error
-	return err
+	return user,err
 }
 
 func GetAllPosts() ([]models.Jobposting, error) {
@@ -56,7 +54,7 @@ func DeleteJob(companyID string, deletejob models.Jobposting) {
 
 func GetJobpostByCompanyName(companyName string) ([]models.Jobposting, error) {
 	var create []models.Jobposting
-	err := helper.Db.Where("job_id=?", companyName).First(&create).Error
+	err := helper.Db.Where("company_name=?", companyName).Find(&create).Error
 	return create, err
 }
 

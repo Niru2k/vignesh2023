@@ -3,8 +3,8 @@ package models
 type Information struct {
 	User_id     uint   `json:"-"                   gorm:"primaryKey;autoIncrement:true"`
 	Email       string `json:"email"               gorm:"column:email;type:varchar(35)"`
-	Username    string `json:"username"            gorm:"column:user_name;type:varchar(35)"`
-	Password    string `json:"password"            gorm:"column:password;type:varchar(35)"`
+	Username    string `json:"username"            gorm:"column:user_name;type:varchar(100)"`
+	Password    string `json:"password"            gorm:"column:password;type:varchar(100)"`
 	Role        string `json:"role"                gorm:"column:role;type:varchar(25)"`
 	PhoneNumber string `json:"phone_number"        gorm:"column:phone_number;type:varchar(15)"`
 }
