@@ -25,15 +25,15 @@ func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 		claims := jwt.MapClaims{}
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-			return []byte("secret"), nil // Replace "secret" with your own secret key
+			return []byte("secret"), nil
 		})
 
 		if err != nil || !token.Valid {
 			return c.String(http.StatusUnauthorized, "Invalid token")
 		}
 		//Check whether token is expired or not
-		a, ok := claims["exp"].(int64)
-		if ok && a < time.Now().Unix() {
+		check, ok := claims["exp"].(int64)
+		if ok && check < time.Now().Unix() {
 			return c.String(http.StatusUnauthorized, "Expired token")
 		}
 
@@ -62,10 +62,10 @@ func UserAuth(c echo.Context) error {
 	return nil
 }
 
-//common verification
+// User and admin verification
 func CommonAuth(c echo.Context) error {
 	role := c.Get("role").(string)
-	if role == "user"||role == "admin" {
+	if role == "user" || role == "admin" {
 		return nil
 	}
 	return errors.New("only user and admin have access to this endpoint")

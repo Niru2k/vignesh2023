@@ -2,7 +2,6 @@ package repository
 
 import (
 	//user defined package
-	// "echo/handler"
 	"echo/helper"
 	"echo/models"
 )
@@ -13,7 +12,7 @@ func CreateTables() {
 	helper.Db.AutoMigrate(&models.Comments{})
 }
 
-func CreateUser(user models.Information)  {
+func CreateUser(user models.Information) {
 	helper.Db.Create(&user)
 }
 
@@ -21,9 +20,9 @@ func JobPosting(post models.Jobposting) error {
 	err := helper.Db.Create(&post).Error
 	return err
 }
-func ReadUserByEmail(user models.Information)(models.Information,error)  {
+func ReadUserByEmail(user models.Information) (models.Information, error) {
 	err := helper.Db.Where("email=?", user.Email).First(&user).Error
-	return user,err
+	return user, err
 }
 
 func GetAllPosts() ([]models.Jobposting, error) {

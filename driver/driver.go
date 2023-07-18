@@ -1,10 +1,14 @@
 package driver
 
 import (
+	//user defined package
 	"echo/helper"
+
+	//built in package
 	"fmt"
 	"os"
 
+	//third party package
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
