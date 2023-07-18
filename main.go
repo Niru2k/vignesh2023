@@ -1,8 +1,14 @@
 package main
 
-//user defined package
-import "echo/router"
+import (
+	//user defined package
+	"echo/driver"
+	"echo/repository"
+	"echo/router"
+)
 
 func main() {
+	driver.DatabaseConnection()
+	repository.CreateTables()
 	router.Router()
 }
