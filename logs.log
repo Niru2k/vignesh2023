@@ -1,0 +1,54 @@
+[INFO]: 24-07-2023 18:47:00 - Signup api called successfully
+[INFO]: 24-07-2023 18:47:00 - message:'sign up successfull' status:200
+[INFO]: 24-07-2023 18:47:14 - Signup api called successfully
+[ERROR]: 24-07-2023 18:47:14 - error:'Password should be more than 8 characters' status:400
+[INFO]: 24-07-2023 18:47:24 - Signup api called successfully
+[ERROR]: 24-07-2023 18:47:24 - error:'Password should be more than 8 characters' status:400
+[INFO]: 24-07-2023 18:47:33 - Signup api called successfully
+[ERROR]: 24-07-2023 18:47:33 - error:'Invalid Email Format' status:400
+[INFO]: 24-07-2023 18:47:41 - login api called successfully
+[INFO]: 24-07-2023 18:47:41 - message:'Login Successful' status:00
+[INFO]: 24-07-2023 18:48:25 - job posting api called successfully
+[INFO]: 24-07-2023 18:48:25 - error:'Job Details Successfully Posted' status:200
+[INFO]: 24-07-2023 18:49:09 - login api called successfully
+[INFO]: 24-07-2023 18:49:09 - message:'Login Successful' status:00
+[INFO]: 24-07-2023 18:49:21 - GetJobPostingbyID API  called successfully
+[INFO]: 24-07-2023 18:49:30 - GetJobPostingByCompany API called successfully
+[INFO]: 24-07-2023 18:49:40 - UpdateJob API called Successfully
+[ERROR]: 24-07-2023 18:49:40 - error:'only admin have the access' status:401
+[INFO]: 24-07-2023 18:49:46 - DeleteJob called successfully
+[ERROR]: 24-07-2023 18:49:46 - Error:'only admin have the access' status:401
+[INFO]: 24-07-2023 18:49:53 - login api called successfully
+[INFO]: 24-07-2023 18:49:53 - message:'Login Successful' status:00
+[INFO]: 24-07-2023 18:50:09 - UpdateJob API called Successfully
+[ERROR]: 24-07-2023 18:50:09 - error:'can't update status:400
+[INFO]: 24-07-2023 18:50:09 - message:'job updated successfully' status:200
+[INFO]: 24-07-2023 18:50:15 - DeleteJob called successfully
+[ERROR]: 24-07-2023 18:50:15 - Error:'only admin have the access' status:401
+[INFO]: 24-07-2023 18:50:20 - DeleteJob called successfully
+[INFO]: 24-07-2023 18:50:20 - message:'job post deleted successfully' status:200
+[INFO]: 24-07-2023 18:50:29 - GetJobPostingDetails called successfully
+[INFO]: 24-07-2023 18:51:04 - GetJobPostingbyID API  called successfully
+[ERROR]: 24-07-2023 18:51:04 - error:'job post does not exist' status:404
+[INFO]: 24-07-2023 18:51:08 - GetJobPostingbyID API  called successfully
+[INFO]: 24-07-2023 18:51:21 - UserComments API called successfully
+[ERROR]: 24-07-2023 18:51:21 - Error:'only user have the access' status:401
+[INFO]: 24-07-2023 18:51:28 - UpdateComment API called successfully
+[ERROR]: 24-07-2023 18:51:28 - Error:'only user have the access' status:401
+[INFO]: 24-07-2023 18:51:34 - DeleteCommentById API called successfully
+[ERROR]: 24-07-2023 18:51:34 - Error:'only user have the access' status:401
+[INFO]: 24-07-2023 18:52:14 - login api called successfully
+[ERROR]: 24-07-2023 18:52:14 - error:'login failed' status:400
+[INFO]: 24-07-2023 18:52:33 - login api called successfully
+[INFO]: 24-07-2023 18:52:33 - message:'Login Successful' status:00
+[INFO]: 24-07-2023 18:52:57 - UserComments API called successfully
+[INFO]: 24-07-2023 18:52:57 - message:'comment posted successfully' status:200
+[INFO]: 24-07-2023 18:53:11 - UserComments API called successfully
+[ERROR]: 24-07-2023 18:53:11 - Error:'job ID not found' status:404
+[INFO]: 24-07-2023 18:53:49 - UpdateComment API called successfully
+[ERROR]: 24-07-2023 18:53:49 - Error:'invalid format' status:400
+[INFO]: 24-07-2023 18:53:49 - message:'comment updated successfully ' status:200
+[INFO]: 24-07-2023 18:54:11 - DeleteCommentById API called successfully
+[INFO]: 24-07-2023 18:54:11 - message:'comment deleted successfully ' status:200
+[INFO]: 24-07-2023 18:54:18 - DeleteCommentById API called successfully
+[ERROR]: 24-07-2023 18:54:18 - Error:'comment id not found' status:404
