@@ -12,6 +12,7 @@ import (
 
 	//user defined package
 	"echo/authentication"
+	"echo/helper"
 	logs "echo/log"
 	"echo/models"
 	"echo/repository"
@@ -52,6 +53,14 @@ func Signup(c echo.Context) error {
 			"status": 400,
 		})
 	}
+	if user.Role != "user" && user.Role != "admin" {
+		log.Error("error:'' status:400")
+        return c.JSON(http.StatusBadRequest, map[string]interface{}{
+            "Error": "Invalid value for role field.Only 'user' and 'admin' are allowed.",
+            "status": 400,
+        })
+    }
+
 	//password should have minimum 8 character
 	if len(user.Password) < 8 {
 		log.Error("error:'Password should be more than 8 characters' status:400")
@@ -132,7 +141,7 @@ func Login(c echo.Context) error {
 			"role":  login.Role,
 			"exp":   time.Now().Add(time.Hour * 24).Unix(),
 		})
-		tokenString, err := token.SignedString(models.SigningKey)
+		tokenString, err := token.SignedString(helper.SigningKey)
 		if err != nil {
 			log.Error("error:'Failed To Generate Token' status:400")
 			return c.JSON(http.StatusBadRequest, map[string]interface{}{

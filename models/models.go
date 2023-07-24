@@ -30,6 +30,4 @@ type Comments struct {
 	Job_id     uint   `json:"job_id"               gorm:"type:bigint;references:jobposting(job_id)"`
 }
 
-
-var SigningKey = []byte("secret")
    

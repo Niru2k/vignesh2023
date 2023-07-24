@@ -1,16 +1,18 @@
 package helper
 
 import (
-	//third party package
-	"gorm.io/gorm"
+	"fmt"
+
+	"github.com/joho/godotenv"
 )
 
-const (
-	Host     = "localhost"
-	Port     = 5432
-	User     = "postgres"
-	Password = "password"
-	Dbname   = "jobs"
-)
+var SigningKey = []byte("secret")
 
-var Db *gorm.DB
+func Configure(filename string)error {
+	err := godotenv.Load(filename)
+	if err != nil {
+		fmt.Printf("error at loading %s",filename)
+		return err
+	}
+	return nil
+}
