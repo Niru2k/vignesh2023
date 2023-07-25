@@ -2,14 +2,17 @@ package driver
 
 import (
 	//user defined package
+
 	"echo/helper"
+	logs "echo/log"
+	"echo/repository"
 
 	//built in package
 	"fmt"
 	"os"
 
 	//third party package
-	"github.com/joho/godotenv"
+
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -17,11 +20,12 @@ import (
 
 var err error
 
-func DatabaseConnection() {
-	err := godotenv.Load(".env")
+func DatabaseConnection() error {
+	log := logs.Logs()
+	err := helper.Configure(".env")
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Error("error in loading env file")
+		fmt.Println("error is loading env file ")
 	}
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
@@ -31,9 +35,12 @@ func DatabaseConnection() {
 
 	//connecting to postgres-SQL
 	connection := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	helper.Db, err = gorm.Open(postgres.Open(connection), &gorm.Config{})
+	repository.Db, err = gorm.Open(postgres.Open(connection), &gorm.Config{})
 	if err != nil {
+		log.Error("error in connecting with database")
 		fmt.Println("error in connecting with database")
 	}
-	fmt.Printf("%s,database connection sucessfull\n", helper.Dbname)
+	log.Info("database connection sucessfull")
+	fmt.Printf("%s,database connection sucessfull\n", dbname)
+	return nil
 }
